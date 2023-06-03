@@ -1,5 +1,4 @@
-start-server:
-	go run server/main.go
-
 compile:
-	protoc -I. --go_out=. --go-grpc_out=. proto/*.proto	
+	protoc -I. --go_out=. --go-grpc_out=. proto/*.proto
+	cp -rp proto/pb server/
+	cp -rp proto/pb client/
