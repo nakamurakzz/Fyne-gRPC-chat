@@ -1,7 +1,8 @@
-package server
+package main
 
 import (
-	"fyne-grpc-chat/proto/pb"
+	"context"
+	"grpc-chat-server/pb"
 	"log"
 	"net"
 
@@ -12,6 +13,14 @@ type ChatServer struct {
 	pb.UnimplementedChatServiceServer
 }
 
+func (c *ChatServer) Chat(context.Context, *pb.ChatMessageRequest) (*pb.ChatMessageResponse, error) {
+	log.Println("Chat called")
+	chat := &pb.ChatMessageResponse{
+		Message: "Hello from the server!",
+	}
+	return chat, nil
+}
+
 func main() {
 	log.Println("start server...")
 
@@ -20,5 +29,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	server := grpc.NewServer()
-	server.Serve(lis)
+
+	pb.RegisterChatServiceServer(server, &ChatServer{})
+
+	log.Println("Server is running at port 8080")
+	if err := server.Serve(lis); err != nil {
+		log.Fatalf("Failed to start: %v", err)
+	}
 }
